@@ -1,5 +1,5 @@
 FROM amazoncorretto:17
-MAINTAINER dev@welab.com
+LABEL maintainer="dev@welab.com"
 VOLUME /tmp
 EXPOSE 8080
 COPY build/libs/*.jar /app.jar

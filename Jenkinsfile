@@ -13,7 +13,7 @@ pipeline {
     parameters {
         gitParameter branch: '',
                     branchFilter: '.*',
-                    defaultValue: 'origin/main',
+                    defaultValue: 'origin/master',
                     description: '', listSize: '0',
                     name: 'TAG',
                     quickFilterEnabled: false,
@@ -65,7 +65,7 @@ pipeline {
                     sh "echo DOCKER_IMAGE_NAME is ${DOCKER_IMAGE_NAME}"
 
                     sh "echo TAG is ${params.TAG}"
-                    if( params.TAG.startsWith('origin') == false && params.TAG.endsWith('/main') == false ) {
+                    if( params.TAG.startsWith('origin') == false && params.TAG.endsWith('/master') == false ) {
                         if( params.RELEASE == true ) {
                             DOCKER_IMAGE_VERSION += '-RELEASE'
                             PROD_BUILD = true

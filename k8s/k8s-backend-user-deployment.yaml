@@ -13,8 +13,19 @@ spec:
         app: k8s-backend-user  # selector와 일치해야 함
     spec:
       containers:
-        - name: k8s-backend-user
-          image: chanhyeokkang/k8s-backend-user:0.0.1
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8080
+      - name: k8s-backend-user
+        image: chanhyeokkang/k8s-backend-user:0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMount:
+          - mountPath: /etc/config
+            name: backend-user-config-volume
+
+      volumes:
+        - name: backend-user-config-volume
+          configMap:
+            name: backend-user-config
+            items:
+              - key: application-dev.yml
+                path: application-dev.yml

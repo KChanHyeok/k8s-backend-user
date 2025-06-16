@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/k8s/**
+
+/src/main/resources/application-local.yml

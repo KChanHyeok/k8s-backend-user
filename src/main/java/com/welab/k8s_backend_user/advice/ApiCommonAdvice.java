@@ -47,23 +47,23 @@ public class ApiCommonAdvice {
         );
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({NoResourceFoundException.class})
-    public ApiResponseDto<String> handleNoResourceFoundException(NoResourceFoundException e) {
-        return ApiResponseDto.createError(
-                "NoResource",
-                "리소스를 찾을 수 없습니다.");
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ApiResponseDto<ParameterErrorDto.FieldList> handleArgumentNotValidException(MethodArgumentNotValidException e) {
-        BindingResult result = e.getBindingResult();
-        ParameterErrorDto.FieldList fieldList = ParameterErrorDto.FieldList.of(result);
-
-        String errorMessage = fieldList.getErrorMessage();
-        return ApiResponseDto.createError("ParameterNotValid", errorMessage, fieldList);
-    }
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    @ExceptionHandler({NoResourceFoundException.class})
+//    public ApiResponseDto<String> handleNoResourceFoundException(NoResourceFoundException e) {
+//        return ApiResponseDto.createError(
+//                "NoResource",
+//                "리소스를 찾을 수 없습니다.");
+//    }
+//
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler({MethodArgumentNotValidException.class})
+//    public ApiResponseDto<ParameterErrorDto.FieldList> handleArgumentNotValidException(MethodArgumentNotValidException e) {
+//        BindingResult result = e.getBindingResult();
+//        ParameterErrorDto.FieldList fieldList = ParameterErrorDto.FieldList.of(result);
+//
+//        String errorMessage = fieldList.getErrorMessage();
+//        return ApiResponseDto.createError("ParameterNotValid", errorMessage, fieldList);
+//    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({Exception.class})

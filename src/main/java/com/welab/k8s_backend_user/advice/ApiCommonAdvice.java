@@ -55,7 +55,7 @@ public class ApiCommonAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({NoResourceFoundException.class})
     public ApiResponseDto<String> handleNoResourceFoundException(NoResourceFoundException e) {
-        e.printStackTrace();
+        log.warn("NoResourceFoundException 발생: {}", e.getMessage(), e);
 
         return ApiResponseDto.createError(
                 "NoResource",

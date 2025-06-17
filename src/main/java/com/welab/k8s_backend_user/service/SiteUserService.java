@@ -21,28 +21,30 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SiteUserService {
     private final SiteUserRepository siteUserRepository;
-    private final KafkaMessageProducer kafkaMessageProducer;
     private final TokenGenerator tokenGenerator;
+    private final KafkaMessageProducer kafkaMessageProducer;
 
     @Transactional
     public void registerUser(SiteUserRegisterDto registerDto) {
         SiteUser siteUser = registerDto.toEntity();
 
         siteUserRepository.save(siteUser);
+
         SiteUserInfoEvent event = SiteUserInfoEvent.fromEntity("Create", siteUser);
         kafkaMessageProducer.send(SiteUserInfoEvent.Topic, event);
     }
 
     @Transactional(readOnly = true)
-    public TokenDto.AccessResfreshToken login(SiteUserLoginDto siteUserLoginDto) {
-        SiteUser user = siteUserRepository.findByUserId(siteUserLoginDto.getUserId());
-        if(user == null) {
-            throw new BadParameter("아이디 또는 비밀번호를 확인하세요");
+    public TokenDto.AccessResfreshToken login(SiteUserLoginDto loginDto) {
+        SiteUser user = siteUserRepository.findByUserId(loginDto.getUserId());
+        if (user == null) {
+            throw new BadParameter("아이디 또는 비밀번호를 확인하세요.");
         }
 
-        if(!SecureHashUtils.matches(siteUserLoginDto.getPassword(), user.getPassword())) {
-            throw new BadParameter("아이디 또는 비밀번호를 확인하세요");
+        if (!SecureHashUtils.matches(loginDto.getPassword(), user.getPassword())) {
+            throw new BadParameter("아이디 또는 비밀번호를 확인하세요.");
         }
-        return tokenGenerator.generateAccessRefreshToken(siteUserLoginDto.getUserId(), "WEB");
+
+        return tokenGenerator.generateAccessRefreshToken(loginDto.getUserId(), "WEB");
     }
 }

@@ -19,34 +19,15 @@ public class TokenGenerator {
     private volatile SecretKey secretKey;
 
     private SecretKey getSecretKey() {
-        if(secretKey == null) {
+        if (secretKey == null) {
             synchronized (this) {
-                if(secretKey == null) {
+                if (secretKey == null) {
                     secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(configProperties.getSecretKey()));
                 }
             }
         }
 
         return secretKey;
-    }
-
-    private TokenDto.JwtToken generateJwtToken(String userId, String deviceType, boolean refreshToken) {
-        int tokenExpiresIn = tokenExpiresIn(refreshToken, deviceType);
-        String tokenType = refreshToken ? "refresh" : "access";
-        String token = Jwts.builder()
-                .issuer("welab")
-                .subject(userId)
-                .claim("userId", userId)
-                .claim("deviceType", deviceType)
-                .claim("tokenType", tokenType)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + tokenExpiresIn * 1000L))
-                .signWith(getSecretKey())
-                .header().add("typ","JWT")
-                .and()
-                .compact();
-
-        return new TokenDto.JwtToken(token, tokenExpiresIn);
     }
 
     public TokenDto.AccessToken generateAccessToken(String userId, String deviceType) {
@@ -60,13 +41,34 @@ public class TokenGenerator {
         return new TokenDto.AccessResfreshToken(accessJwtToken, refreshJwtToken);
     }
 
+    private TokenDto.JwtToken generateJwtToken(String userId, String deviceType, boolean refreshToken) {
+        int tokenExpiresIn = tokenExpiresIn(refreshToken, deviceType);
+        String tokenType = refreshToken ? "refresh" : "access";
+
+        String token = Jwts.builder()
+                .issuer("welab")
+                .subject(userId)
+                .claim("userId", userId)
+                .claim("deviceType", deviceType)
+                .claim("tokenType", tokenType)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + tokenExpiresIn * 1000L))
+                .signWith(getSecretKey())
+                .header().add("typ", "JWT")
+                .and()
+                .compact();
+
+        return new TokenDto.JwtToken(token, tokenExpiresIn);
+    }
+
     private int tokenExpiresIn(boolean refreshToken, String deviceType) {
-        if(!refreshToken) {
-           return 60 * 15;
+        if (!refreshToken) {
+            return 60 * 15;
         }
-        if("Mobile".equals(deviceType)) {
+
+        if ("MOBILE".equals(deviceType)) {
             return configProperties.getMobileExpiresIn();
-        } else if("Tablet".equals(deviceType)) {
+        } else if ("TABLET".equals(deviceType)) {
             return configProperties.getTabletExpiresIn();
         }
 
